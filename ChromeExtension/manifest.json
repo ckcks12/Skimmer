@@ -1,0 +1,30 @@
+{
+	"manifest_version":	2,
+
+	"name":	"skimmer",
+	"description":	"skim the articles for you",
+	"version":	"0.1",
+	"icons":	
+	{
+		"16":	"16.png",
+		"48":	"48.png"
+	},
+
+	"browser_action":
+	{
+		"default_icon":
+		{
+			"16":	"16.png",
+			"48":	"48.png"
+		},
+		"default_title":	"skimmer",
+		"default_popup":	"popup.html"
+	},
+
+	"permissions":	
+	[
+		"activeTab",
+		"tabs",
+		"<all_urls>"
+	]
+}
