@@ -6,6 +6,7 @@ header("Content-Type: text/html; charset=UTF-8");
 CHECK_TIME1();
 
 $url = isset($_GET["url"]) ? $_GET["url"] : "";
+$no_parse = isset($_GET["no_parse"]) ? true : false;
 
 if( mb_strlen($url) < 2 )
 {
@@ -48,6 +49,11 @@ $html = preg_replace('/(<script.*?<[\\b]*\/script[\\b]*>)/is', '', $html);
 $html = html_entity_decode($html);
 $html = strip_tags($html);
 $html = preg_replace("/([\\b\r\n\r\t]+)/s", " ", $html); 
+
+if( $no_parse ) 
+{
+	die($html);
+}
 
 // extract
 $word_arr = explode(" ", $html);
