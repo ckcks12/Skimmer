@@ -54,24 +54,29 @@ function skimmer()
 		return setTimeout(skimmer, 1000);
 	} 
 
-	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = () => 
+	var xhr = [];
+	for( var i=0; i<r_arr.length; i++ )
 	{
-		if( xhr.readyState == 4 )
-		{ 
-			for( var i=0; i<r_arr.length; i++ )
+		xhr[i] = new XMLHttpRequest();
+		xhr[i].idx = i;
+		xhr[i].onreadystatechange = ((k) =>
+		{
+			return () =>
 			{
-				var data = JSON.parse(xhr.responsetext);
-				r_arr[i].parentNode.innerHTML = skim(data) + r_arr[i].parentNode.innerHTML;
-			} 
-		}
-	};
+				if( xhr[k].readyState == 4 )
+				{ 
+					console.log("xhr[" + k + "] response : " + xhr[k].responseText);
+					var data = JSON.parse(xhr[k].responseText);
+					r_arr[k].parentNode.innerHTML = skim(data) + r_arr[k].parentNode.innerHTML;
+				}
+			}; 
+		})(i);
+		var url = r_arr[i].getElementsByTagName("a")[0].href;
 
-	var url = r_arr[0].getElementsByTagName("a")[0].href;
-
-	xhr.open("GET", "//skimmer.ckcks12.com/skim.php?url="+url);
-	xhr.send();
-	
+		xhr[i].open("GET", "//skimmer.ckcks12.com/skim.php?url="+url);
+		xhr[i].send();
+		console.log("xhr[" + i + "] : " + url); 
+	}
 }
 
 function wait()
