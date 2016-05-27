@@ -1,64 +1,101 @@
-(function skimmer()
+skimmerDaemon();
+
+function skimmerDaemon()
 {
-	var r_arr = document.getElementsByClassName("r");
-	if( r_arr.length > 0 )
+	if( ! isGoogleSearch(location.href) )
+	{
+		return false;
+	}
+
+	wait();
+	if( document.querySelector("#skim") == null )
+	{
+		skimmer();
+	}
+	setTimeout(skimmerDaemon, 3000);
+}
+
+function skim(word)
+{ 
+	var str = "<div id='skim'>";
+	for( i=0; i<word.length; i++ )
+	{ 	
+		str += "<span style='color: gray; font-size: 9pt; margin-right: 10px'>";
+		str += word[i];
+		str += "</span>"; 
+	} 
+	str += "</div>";
+	return str;
+} 
+
+/*
+function skimmer()
+{  
+	var r_arr = document.getElementsByClassName("r"); 
+	if( r_arr.length <= 0 )
+	{	
+		return setTimeout(skimmer, 1000);
+	} 
+	else
 	{
 		for( var i=0; i<r_arr.length; i++ )
 		{
-			r_arr[i].parentNode.innerHTML = word("화면크기") + word("충동구매") + word("골드") + r_arr[i].parentNode.innerHTML;
+			r_arr[i].parentNode.innerHTML = skim(["화면", "골드", "어에에예예", "오잉~?"]) + r_arr[i].parentNode.innerHTML;
 		}
 	}
-});
-//document.querySelectorAll(".r")[0].getElementsByTagName("a")[0].href
-(function skimmer_test()
+}
+*/
+
+function skimmer()
 {
+	var r_arr = document.getElementsByClassName("r"); 
+	if( r_arr.length <= 0 )
+	{	
+		return setTimeout(skimmer, 1000);
+	} 
+
 	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = function()
+	xhr.onreadystatechange = () => 
 	{
 		if( xhr.readyState == 4 )
-		{
-			console.log( xhr.responseText );
+		{ 
+			for( var i=0; i<r_arr.length; i++ )
+			{
+				var data = JSON.parse(xhr.responsetext);
+				r_arr[i].parentNode.innerHTML = skim(data) + r_arr[i].parentNode.innerHTML;
+			} 
 		}
 	};
 
-	var r_arr = document.getElementsByClassName("r");
-	/*
-	if( r_arr.length > 0 )
-	{
-		for( var i=0; i<r_arr.length; i++ )
-		{
-			r_arr[i].parentNode.innerHTML = word("화면크기") + word("충동구매") + word("골드") + r_arr[i].parentNode.innerHTML;
-		}
-	}
-	*/
 	var url = r_arr[0].getElementsByTagName("a")[0].href;
 
 	xhr.open("GET", "//skimmer.ckcks12.com/skim.php?url="+url);
 	xhr.send();
-})();
+	
+}
 
-function log(s)
-{
-	chrome.extension.sendMessage(
+function wait()
+{ 
+	if( document.readyState == "complete" )
 	{
-		action: "getSource", 
-		source: s
-	});
+		return true;
+	}
+	else
+	{
+		return setTimeout(wait, 1000);
+	}
 }
 
-function word(str)
+function isGoogleSearch(url)
 {
-	return "<span style='color: gray; font-size: 9pt; margin-right: 10px'>" + str + "</span>";
+	var google_url_regex = /\w*\.google\..*?\//i;
+
+	if( google_url_regex.exec(url) != null )
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
-
-/*
-
-function get_source(document_body){
-    return document_body.innerHTML;
-}
-
-chrome.extension.sendMessage({
-    action: "getSource",
-    source: get_source(document.body)
-});
-*/
