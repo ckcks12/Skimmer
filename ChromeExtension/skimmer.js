@@ -154,7 +154,7 @@ function skimmer()
 			}; 
 		})(i);
 		var url = window.r_arr[i].getElementsByTagName("a")[0].href;
-
+		window.skimmed_data = [];
 		xhr[i].open("GET", "//skimmer.ckcks12.com/skim2.php?url="+url);
 		xhr[i].send();
 		console.log("xhr[" + i + "] : " + url); 
